@@ -1,0 +1,34 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity ALUControl is
+port( ALUOp : in std_logic_vector(1 downto 0);
+	Funct: in std_logic_vector(5 downto 0);
+	Operation: out std_logic_vector(3 downto 0)
+);
+
+end ALUControl;
+
+Architecture arch_ALUControl of ALUControl is 
+begin 
+
+process(ALUOp, Funct) begin
+if(ALUOp="00") then
+Operation<="0010";
+elsif(ALUOp="01") then
+Operation<="0110";
+elsif(ALUOp="10" and Funct="100000") then
+Operation<="0010";
+elsif(ALUOp="10" and Funct="100010") then
+Operation<="0110";
+elsif(ALUOp="10" and Funct="100100") then
+Operation<="0000";
+elsif(ALUOp="10" and Funct="100101") then
+Operation<="0001";
+elsif(ALUOp="10" and Funct="101010") then
+Operation<="0111";
+end if;
+end process;
+end arch_ALUControl;
