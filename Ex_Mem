@@ -1,0 +1,96 @@
+library ieee;
+
+use ieee.std_logic_1164.all;
+
+use ieee.std_logic_arith.all;
+
+use ieee.std_logic_unsigned.all;
+
+
+
+
+entity RegEx is
+
+  port(clk : in std_logic;
+
+      AddRes : in std_logic_vector(31 downto 0);
+
+      Zero : in std_logic;
+
+      ALURes : in std_logic_vector(31 downto 0);
+
+      Rd2 : in std_logic_vector(31 downto 0);
+
+      MuxO : in std_logic_vector(4 downto 0);
+
+      RegWrite: in std_logic;
+
+      MemtoReg : in std_logic;
+
+      MemWrite : in std_logic;
+
+      MemRead : in std_logic;
+
+      Branch : in std_logic;
+
+      O_Zero: out std_logic;
+
+      O_AddRes : out std_logic_vector(31 downto 0);
+
+      O_ALURes : out std_logic_vector(31 downto 0);
+
+      O_Rd2 : out std_logic_vector(31 downto 0);
+
+      O_Muxo : out std_logic_vector(4 downto 0);
+
+      O_RegWrite : out std_logic;
+
+      O_MemtoReg : out std_logic;
+
+      O_MemWrite : out std_logic;
+
+      O_MemRead : out std_logic;
+
+      O_branch: out std_logic
+
+    );
+
+  end RegEx;
+
+  
+
+architecture arch_RegEx of RegEx is
+
+begin
+
+  process(clk)
+
+    begin
+
+      if(rising_edge(clk)) then
+
+      O_AddRes<= AddRes;
+
+      O_ALURes <= ALURes;
+
+      O_Muxo <= Muxo;
+
+      O_Rd2 <= Rd2;
+
+      O_Zero <= Zero;
+
+      O_RegWrite<= RegWrite;
+
+      O_MemtoReg<= MemtoReg;
+
+      O_MemWrite <= MemWrite;
+
+      O_MemRead <= MemRead;
+
+      O_branch <= Branch;
+
+    end if;
+
+  end process;
+
+end arch_RegEx; 
