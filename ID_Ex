@@ -1,0 +1,123 @@
+
+library ieee;
+
+use ieee.std_logic_1164.all;
+
+use ieee.std_logic_arith.all;
+
+use ieee.std_logic_unsigned.all;
+
+
+
+
+entity RegID is
+
+  port( clk :in std_logic;
+
+        Pc4 : in std_logic_vector(31 downto 0);
+
+        Rd1 : in std_logic_vector(31 downto 0);
+
+        Rd2 : in std_logic_vector(31 downto 0);
+
+        SignExt :in std_logic_vector(31 downto 0);
+
+        Rd : in std_logic_vector( 4 downto 0);
+
+        Rs : in std_logic_vector( 4 downto 0);
+
+        ALUsrc : in std_logic ; 
+
+        MemtoReg: in std_logic;
+
+        MemWrite : in std_logic;
+
+        RegWrite: in std_logic;
+
+        Regdst : in std_logic;
+
+        Branch : in  std_logic;
+        
+        MemRead: in std_logic;
+
+        AluOp : in std_logic_vector(1 downto 0);
+
+        O_Rd1 : out std_logic_vector(31 downto 0);
+
+        O_Rd2 : out std_logic_vector(31 downto 0);
+
+        O_signExt :out std_logic_vector(31 downto 0);
+
+        O_Pc4 : out std_logic_vector(31 downto 0);
+
+        O_Rd : out std_logic_vector(4 downto 0);
+
+        O_Rs : out std_logic_vector(4 downto 0);
+
+        O_ALUsrc : out std_logic;
+
+        O_MemtoReg : out std_logic;
+
+        O_MemWrite : out std_logic;
+
+        O_Regwrite : out std_logic;
+
+        O_RegDst : out std_logic;
+
+        O_Branch: out std_logic;
+        
+        O_MemRead: out std_logic;
+
+        O_AluOp : out std_logic_vector(1 downto 0)
+
+        
+
+      );
+
+  end RegID;
+
+  
+
+architecture arch_RegID of RegID is
+
+begin 
+
+  process(clk)
+
+    begin
+
+    if(rising_edge(clk)) then
+
+      O_pc4<= Pc4;
+
+      O_Rd1<= Rd1;
+
+      O_Rd2<= Rd2;
+
+      O_signExt <= SignExt;
+
+      O_Rd<= Rd;
+
+      O_Rs<= Rs;
+
+      O_ALUsrc <= ALUsrc;
+
+      O_AluOp<= AluOp;
+
+      O_MemtoReg<= MemtoReg;
+
+      O_MemWrite<= MemWrite;
+
+      O_RegWrite<= RegWrite;
+
+      O_RegDst<= Regdst;
+
+      O_Branch<= Branch;
+      
+      O_MemRead <= MemRead;
+
+    end if;
+
+  end process;
+
+end arch_RegID;
