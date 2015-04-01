@@ -1,0 +1,64 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity Registers is 
+port (RR1 : in std_logic_vector(4 downto 0);
+	RR2 : in std_logic_vector(4 downto 0);
+	WR : in std_logic_vector(4 downto 0);
+	WD : in std_logic_vector(31 downto 0);
+	RegWrite: in std_logic;
+	RD1 : out std_logic_vector(31 downto 0);
+	RD2 : out std_logic_vector(31 downto 0)
+);
+
+end Registers;
+
+architecture arch_Registers of Registers is
+
+type RegFile is array ( 0 to 31 ) of std_logic_vector(31 downto 0);
+signal Reg_num : RegFile := (X"00000000", X"00000000", X"00000000", X"00000000", X"00000000",
+				X"00000000", X"00000000", X"00000000", X"00000000", X"00000007",
+				X"00000000", X"00000000", X"00000004", X"00000000", X"00000000",
+				X"00000000", X"00000008", X"00000007", X"00000006", X"00000000",
+				X"00000000", X"00000000", X"00000000", X"0000000F", X"00000000", others=>(Regfile'range=>'0')); 
+
+begin 
+
+-- Initialization of s0, s1 and s7 pending
+--Reg_num(0)<=X"00000000";
+--Reg_num(1)<=X"00000000";
+--Reg_num(2)<=X"00000000";
+--Reg_num(3)<= X"00000000";
+--Reg_num(4)<= X"00000000";
+--Reg_num(5)<= X"00000000";
+--Reg_num(6)<= X"00000000";
+--Reg_num(7)<= X"00000000";
+--Reg_num(8)<= X"00000000";
+--Reg_num(9)<= X"00000000";
+--Reg_num(10)<= X"00000000";
+--Reg_num(11)<= X"00000000";
+--Reg_num(12)<= X"00000000";
+--Reg_num(13)<= X"00000000";
+--Reg_num(14)<= X"00000000";
+--Reg_num(15)<= X"00000000";
+--Reg_num(16)<=X"00000004";
+--Reg_num(17)<= X"00000010";
+--Reg_num(18)<= X"00000000";
+--Reg_num(19)<= X"00000000";
+--Reg_num(20)<= X"00000000";
+--Reg_num(21)<= X"00000000";
+--Reg_num(22)<= X"00000000";
+--Reg_num(23) <= X"0000000F";
+RD1 <= Reg_num(conv_integer(RR1));
+RD2 <= Reg_num(conv_integer(RR2));
+process (Regwrite, RR1, RR2, WR, WD) begin
+
+if (RegWrite = '1') then
+	 Reg_num(conv_integer(WR))<= WD;
+	end if;
+
+end process;
+end arch_Registers ;
+
