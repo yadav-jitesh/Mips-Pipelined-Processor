@@ -1,0 +1,41 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity DMEM is
+port (WriteData : in std_logic_vector(31 downto 0);
+	Address : in std_logic_vector(31 downto 0);
+	MemRead :in std_logic;
+	MemWrite : in std_logic;
+	ReadData: out std_logic_vector(31 downto 0)
+);
+end DMEM;
+
+architecture arch_DMEM of DMEM is
+type Mem_num is array (0 to 31) of std_logic_vector(31 downto 0);
+signal Datnum : Mem_num := (X"00000009", X"00000008", X"00000000", X"00000009", X"00000009", X"00000000", x"00000000", X"00000008", X"00000008", others=>(Mem_num'range =>'0'));
+
+begin
+--Mem_in(0)<= X"00000000";
+--Mem_in(1)<= X"00000000";
+--Mem_in(2)<= X"00000000";
+--Mem_in(3)<= X"00000000"
+--Mem_in(5)<= X"00000000";
+--Mem_in(4)<= X"00000009";
+--Mem_in(6)<= X"00000000";
+--Mem_in(7)<= X"00000000";
+--Mem_in(8)<= X"00000008";
+process(MemWrite, WriteData, Address) is
+variable num:integer;
+begin 
+num :=(conv_integer(Address(31 downto 0)));
+	if(MemWrite = '1') then
+	Datnum(num)<= WriteData;
+	end if;
+	if(MemRead = '1') then
+	ReadData<= Datnum(num);
+	end if;
+
+end process;
+end arch_DMEM;
