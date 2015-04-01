@@ -1,0 +1,50 @@
+library ieee;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+
+entity Control is 
+port (Opcode : in std_logic_vector(5 downto 0);
+	RegDst : out std_logic;
+	Branch : out std_logic;
+	MemRead : out std_logic;
+	MemtoReg: out std_logic;
+	MemWrite: out std_logic;
+	ALUSrc : out std_logic;
+	RegWrite: out std_logic;
+	Jump : out std_logic;
+	ALUOp : out std_logic_vector(1 downto 0)
+);
+end Control;
+
+Architecture arch_Control of Control is
+
+
+begin
+process (Opcode) 
+variable Array_for_signals: std_logic_vector (9 downto 0):= (others=> '0');
+begin
+ if(Opcode = "000000") then
+Array_for_signals := "0100100010" ; -- for R format
+elsif(Opcode ="100011") then 
+Array_for_signals := "0011110000" ; -- for lw 
+elsif(Opcode="101011") then
+ Array_for_signals := "0010001000" ; -- for sw 
+elsif( Opcode="000100")then
+ Array_for_signals := "0000000101" ; -- for beq 
+ elsif(Opcode = "000010") then
+ Array_for_signals := "1000000000" ; -- for jump
+end if;
+
+jump <=Array_for_signals(9);
+RegDst <= Array_for_signals(8);
+ALUSrc <= Array_for_signals(7);
+MemtoReg <= Array_for_signals(6);
+RegWrite <= Array_for_signals(5);
+MemRead <= Array_for_signals(4);
+MemWrite <= Array_for_signals(3);
+Branch <= Array_for_signals(2);
+ALUOp <= Array_for_signals(1 downto 0);
+end process;
+end arch_Control;
