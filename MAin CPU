@@ -1,0 +1,499 @@
+library ieee;
+
+use ieee.std_logic_1164.all;
+
+use ieee.std_logic_arith.all;
+
+use ieee.std_logic_unsigned.all;
+
+
+
+
+entity DataPath1 is 
+
+port( clk : in std_logic 
+
+);
+
+end DataPath1;
+
+
+
+
+architecture arch_DataPath1 of DataPath1 is 
+
+
+
+
+component ALU
+
+port ( a : in std_logic_vector(31 downto 0);
+
+	b : in std_logic_vector(31 downto 0);
+
+	oper : in std_logic_vector(3 downto 0);
+
+	result: buffer std_logic_vector(31 downto 0);
+
+	zero : buffer std_logic; 
+
+	overflow : buffer std_logic
+
+);
+
+end component;
+
+
+
+
+component PC
+
+port(clk :in std_logic;
+
+		AddressIn: in std_logic_vector(31 downto 0);
+
+		AddressOut: out std_logic_vector(31 downto 0)
+
+		);
+
+	end component;
+
+	
+
+component IMEM
+
+  port(Address : in std_logic_vector(31 downto 0);
+
+	ReadData: out std_logic_vector(31 downto 0)
+
+);
+
+end component;
+
+
+
+
+component RegIF is
+
+  port( clk : in std_logic;
+
+        instruct_in :  in std_logic_vector(31 downto 0);
+
+        Pc4 : in std_logic_vector(31 downto 0);
+
+        instruct_out : out std_logic_vector(31 downto 0);
+
+        Pc4out : out std_logic_vector(31 downto 0)
+
+      );
+
+end component;
+
+
+
+
+component Registers 
+
+port (RR1 : in std_logic_vector(4 downto 0);
+
+	RR2 : in std_logic_vector(4 downto 0);
+
+	WR : in std_logic_vector(4 downto 0);
+
+	WD : in std_logic_vector(31 downto 0);
+
+	RegWrite: in std_logic;
+
+	RD1 : out std_logic_vector(31 downto 0);
+
+	RD2 : out std_logic_vector(31 downto 0)
+
+);
+
+end component;
+
+component SignExtend
+
+  port ( x : in std_logic_vector(15 downto 0);
+
+	y: out std_logic_vector(31 downto 0)
+
+);
+
+end component;
+
+
+
+
+component control
+
+  port (Opcode : in std_logic_vector(5 downto 0);
+
+	RegDst : out std_logic;
+
+	Branch : out std_logic;
+
+	MemRead : out std_logic;
+
+	MemtoReg: out std_logic;
+
+	MemWrite: out std_logic;
+
+	ALUSrc : out std_logic;
+
+	RegWrite: out std_logic;
+
+	Jump : out std_logic;
+
+	ALUOp : out std_logic_vector(1 downto 0)
+
+);
+
+end component;
+
+
+
+
+component RegID 
+
+  port(clk :in std_logic;
+
+        Pc4 : in std_logic_vector(31 downto 0);
+
+        Rd1 : in std_logic_vector(31 downto 0);
+
+        Rd2 : in std_logic_vector(31 downto 0);
+
+        SignExt :in std_logic_vector(31 downto 0);
+
+        Rd : in std_logic_vector( 4 downto 0);
+
+        Rs : in std_logic_vector( 4 downto 0);
+
+        ALUsrc : in std_logic ; 
+
+        MemtoReg: in std_logic;
+
+        MemWrite : in std_logic;
+
+        RegWrite: in std_logic;
+
+        Regdst : in std_logic;
+
+        Branch : in std_logic;
+        
+        MemRead: in std_logic;
+        
+        AluOp : in std_logic_vector(1 downto 0);
+
+        O_Rd1 : out std_logic_vector(31 downto 0);
+
+        O_Rd2 : out std_logic_vector(31 downto 0);
+
+        O_signExt :out std_logic_vector(31 downto 0);
+
+        O_Pc4 : out std_logic_vector(31 downto 0);
+
+        O_Rd : out std_logic_vector(4 downto 0);
+
+        O_Rs : out std_logic_vector(4 downto 0);
+
+        O_ALUsrc : out std_logic;
+
+        O_MemtoReg : out std_logic;
+
+        O_MemWrite : out std_logic;
+
+        O_Regwrite : out std_logic;
+
+        O_RegDst : out std_logic;
+
+        O_Branch: out std_logic;
+        
+        O_MemRead: out std_logic;
+        
+        O_AluOp : out std_logic_vector(1 downto 0)
+
+        
+
+      );
+
+  end component;
+
+component ShiftLeft2
+
+  port( x : in std_logic_vector(31 downto 0);
+
+	y : out std_logic_vector(31 downto 0)
+
+	);
+
+end component;
+
+
+
+
+component Mux32
+
+  port ( x : in std_logic_vector (31 downto 0);
+
+	y : in std_logic_vector ( 31 downto 0 );
+
+	sel : in std_logic ;
+
+	z : out std_logic_vector(31 downto 0)
+
+);
+
+end Component;
+
+
+
+
+component Mux5
+
+  port( x : in std_logic_vector ( 4 downto 0 );
+
+	y :in std_logic_vector( 4 downto 0 );
+
+	sel : in std_logic;
+
+	z : out std_logic_vector( 4 downto 0)
+
+);
+
+end component;
+
+
+
+
+component Adder
+
+  port ( i , j : in std_logic_vector(31 downto 0);
+
+	k : out std_logic_vector(31 downto 0)
+
+);
+
+end component;
+
+component ALUcontrol
+
+  port( ALUOp : in std_logic_vector(1 downto 0);
+
+	Funct: in std_logic_vector(5 downto 0);
+
+	Operation: out std_logic_vector(3 downto 0)
+
+);
+
+end component;
+
+component RegEx
+
+  port(clk : in std_logic;
+
+      AddRes : in std_logic_vector(31 downto 0);
+
+      Zero : in std_logic;
+
+      ALURes : in std_logic_vector(31 downto 0);
+
+      Rd2 : in std_logic_vector(31 downto 0);
+
+      MuxO : in std_logic_vector(4 downto 0);
+
+      RegWrite: in std_logic;
+
+      MemtoReg : in std_logic;
+
+      MemWrite : in std_logic;
+
+      MemRead : in std_logic;
+
+      Branch :in std_logic;
+
+      O_Zero: out std_logic;
+
+      O_AddRes : out std_logic_vector(31 downto 0);
+
+      O_ALURes : out std_logic_vector(31 downto 0);
+
+      O_Rd2 : out std_logic_vector(31 downto 0);
+
+      O_Muxo : out std_logic_vector(4 downto 0);
+
+      O_RegWrite : out std_logic;
+
+      O_MemtoReg : out std_logic;
+
+      O_MemWrite : out std_logic;
+
+      O_MemRead :out std_logic;
+
+      O_branch: out std_logic
+
+    );
+
+  end component;
+
+component RegMem
+
+port ( clk : in std_logic;
+
+        RegWrite : in std_logic;
+
+        ReadData:  in std_logic_vector(31 downto 0);
+
+        ALUresult : in std_logic_vector(31 downto 0);
+
+        Muxo  :in std_logic_vector(4 downto 0);
+
+        MemtoReg : in std_logic;
+
+        O_Regwrite : out std_logic;
+
+        O_ReadData : out std_logic_vector(31 downto 0);
+
+        O_ALUResult : out std_logic_vector(31 downto 0);
+
+        O_Muxo : out std_logic_vector(4 downto 0 );
+
+        O_MemtoReg : out std_logic
+
+      );
+
+    end component;
+
+component DMEM
+
+  port (WriteData : in std_logic_vector(31 downto 0);
+
+	Address : in std_logic_vector(31 downto 0);
+
+	MemRead :in std_logic;
+
+	MemWrite : in std_logic;
+
+	ReadData: out std_logic_vector(31 downto 0)
+
+);
+
+end Component;
+
+component And2
+
+  port( x : in std_logic;
+
+	y : in std_logic;
+
+	z: out std_logic
+
+);
+
+end component;
+
+
+
+
+
+
+
+    signal IFregwrite, DRegwrite, ERegwrite, Mregwrite, ZeroALu,Ezero, branch, MemRead ,RegWr: std_logic:='0';
+
+    signal ExMemWrite, IdMemWrite, MemRead1,ExMemRead, IdMemRead: std_logic :='0';
+
+    signal Fmemtoreg, Mmemtoreg, Wmemtoreg, memtoreg, overflow, jump, ALUsrc, ALUsrc1: std_logic:='0';
+
+    signal AluControlo, ALuopx : std_logic_vector(1 downto 0);
+
+    signal instruct : std_logic_vector(31 downto 0);
+
+    signal ReadDAta1, ReadDAta2, DsignEx, Rdo2, Rdo1, pc4ex, rdox2, writedata: std_logic_vector(31 downto 0);
+
+    signal PcsrcM :std_logic:='0'; 
+    signal ALUSrcEx, RegDstEx, MemWriteM : std_logic:='0';
+
+    signal Mux01, Mux02, Mux04 :std_logic_vector(31 downto 0);
+
+    signal ALuc: std_logic_vector(3 downto 0);
+
+    signal ipc: std_logic_vector(31 downto 0) :=X"00000000"; 
+    signal opc :std_logic_vector(31 downto 0):= X"00000000";
+
+    signal pc4out,pc4outd, AddExMem, instructIF, Muxo4,Signext0, sigEx,slo, ALURes, ALuExMem, ALUResM :std_logic_vector(31 downto 0);
+
+    signal rs , rt, wr, rtx, rsx, Mux03, Mux03e, writeregister:std_logic_vector(4 downto 0);
+
+    signal Readdatai , Readdatao :std_logic_vector(31 downto 0);
+
+    signal opcode : std_logic_vector( 5 downto 0);
+
+    signal BranchC, BranchD, BranchE : std_logic :='0'; 
+    signal AddME : std_logic_vector(31 downto 0):=X"00000000";
+  begin
+
+    
+
+  pcr : PC port map(clk , ipc, opc);
+
+  pcadd : Adder port map(opc, X"00000004",pc4out);
+
+  Mux1: Mux32 port map(pc4out, AddME ,PcsrcM, ipc);
+
+  Ime : IMEM port map(opc, instructIF);    
+
+  IFID : RegIF port map(clk,instructIF, pc4out, instruct, pc4outd);
+  opcode<=instruct(31 downto 26);
+rs <= instruct(25 downto 21);
+rt<= instruct(20 downto 16);
+  ---ID
+
+  ref : registers port map(rs, rt, wr,Muxo4,MRegwrite,ReadDAta1, ReadDAta2);
+
+  siE : SignExtend port map (instruct(15 downto 0),Signext0);
+
+  contrl :control port map  (opcode, RegDstEx, branch,MemRead, FMemtoReg, IdMemWrite, ALUSrc, IFRegWrite,Jump, ALUControlo) ;
+
+  IDEx : RegID port map( clk,pc4outd,ReadDAta1, ReadDAta2,SignExt0,instruct(20 downto 16), instruct(15 downto 11), ALUsrc, FmemtoReg, IdMemWrite,IFRegWrite, RegDstEx,Branch,MemRead1,ALUControlo,pc4ex,Rdo1, Rdo2,SigEx,Rsx, Rtx,
+
+            ALUSrcEX , Mmemtoreg,ExMemWrite,DRegwrite, RegDstEx, BranchD, ExMemRead,ALuopx );
+
+  Mux2 :Mux32 port map(Rdo2, SigEx, AlUSrcEX, Mux02);
+
+  Mux3 : Mux5 port map (rsx, rtx , RegDstEx, Mux03);
+
+  ALC : ALUcontrol port map(Aluopx, SigEx(5 downto 0),ALuc);
+
+  SL : ShiftLeft2 port map (SigEx , slo) ;
+
+  Add1 : Adder port map(pc4ex, slo, AddExMem);
+
+    ALuE : ALU port map(Rdo1, Mux02,ALuc,ALURes,ZeroAlu,overflow);
+
+      --- Ex
+
+      
+
+  ExME : RegEx port map(clk ,AddExMem, ZeroALu,ALURes, Rdo2, Mux03, DRegwrite, Mmemtoreg,ExMemWrite ,ExMemRead , BranchD,Ezero, AddME, ALuExMem,rdox2, Mux03e, ERegwrite, Wmemtoreg,IdMemWrite, IdMemRead , BranchE);
+
+  Dme : DMEM port map(rdox2, ALuExMem,IdMemRead,IdMemWrite, Readdatai);
+
+    Andi : And2 port map(BranchE , Ezero ,PcsrcM);
+
+    -- Mem
+
+    Mem : RegMem port map(clk ,Eregwrite, Readdatai, ALuExMem,Mux03e, WMemtoreg,RegWr,Readdatao, ALUResM, wr, memtoreg);
+
+   Mux4 : Mux32 port map( ALUResM,Readdatao, memtoreg, Mux04);
+
+   
+
+    
+
+    
+
+end arch_Datapath1;
+
+
+
