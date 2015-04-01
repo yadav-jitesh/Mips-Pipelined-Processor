@@ -1,0 +1,54 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity ALU is 
+port( a : in std_logic_vector(31 downto 0);
+	b : in std_logic_vector(31 downto 0);
+	oper : in std_logic_vector(3 downto 0);
+	result: buffer std_logic_vector(31 downto 0);
+	zero : buffer std_logic; 
+	overflow : buffer std_logic
+);
+end ALU;
+
+
+architecture arch_ALU of ALU is
+component Zero_det32 is
+port(x : in std_logic_vector(31 downto 0);
+	y: out std_logic
+);
+end component;
+begin
+process(a, b, oper)
+variable tA : std_logic_vector (31 downto 0);
+variable tB : std_logic_vector (31 downto 0);
+variable res : std_logic_vector (31 downto 0);
+variable zer : std_logic;
+begin
+	tA := a;
+	tB:= b;
+	res := (others=> '0') ;
+	zer := '0';
+
+		if(oper = "0010") then
+			res := tA+tB ;
+			if( res = X"00000000") then
+				zer :='1';
+			else 
+				zer :='0' ;	
+			end if; 
+		elsif(oper ="0110") then
+			res := tA-tB ;
+			if( res = X"00000000") then
+				zer :='1';
+			else 
+				zer :='0' ;
+			end if;
+	end if;
+overflow<= zer;
+result <= res ;
+	end process;
+z: Zero_Det32 port map(result, zero);
+end arch_ALU;
