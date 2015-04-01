@@ -1,0 +1,16 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity Zero_Det32 is 
+port( x: in std_logic_vector(31 downto 0);
+	y: out std_logic
+);
+end Zero_Det32;
+
+architecture arch_Zero_Det32 of Zero_Det32 is
+
+begin
+y <= '1' when x=x"00000000" else '0';
+end arch_Zero_Det32;
