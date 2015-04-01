@@ -1,0 +1,31 @@
+library ieee;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+
+entity PC is 
+	port(clk :in std_logic;
+		AddressIn: in std_logic_vector(31 downto 0);
+		AddressOut: out std_logic_vector(31 downto 0)
+		);
+	end PC;
+
+architecture arch_PC of PC is
+begin
+process(clk , Addressin)
+variable lowclk: boolean := true;
+begin
+if(lowclk=true) then
+	AddressOut <= X"00000000" ;
+	lowclk :=false;
+	end if;
+	if(rising_edge(clk)) then
+	AddressOut<= AddressIn;
+	end if;
+	end process;
+
+
+	
+end arch_PC; 
+	 
