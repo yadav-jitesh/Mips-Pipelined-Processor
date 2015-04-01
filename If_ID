@@ -1,0 +1,51 @@
+library ieee;
+
+use ieee.std_logic_1164.all;
+
+use ieee.std_logic_arith.all;
+
+use ieee.std_logic_unsigned.all;
+
+
+
+
+entity RegIF is
+
+  port( clk : in std_logic;
+
+        instruct_in :  in std_logic_vector(31 downto 0);
+
+        Pc4 : in std_logic_vector(31 downto 0);
+
+        instruct_out : out std_logic_vector(31 downto 0);
+
+        Pc4out : out std_logic_vector(31 downto 0)
+
+      );
+
+end RegIF;
+
+
+
+
+architecture arch_RegIF of RegIF is
+
+  
+
+begin
+
+  process(clk)
+
+    begin 
+
+      if(rising_edge(clk)) then
+
+      instruct_out <= instruct_in;
+
+      pc4out <= Pc4;
+
+    end if;
+
+  end process;
+
+end arch_RegIF;
