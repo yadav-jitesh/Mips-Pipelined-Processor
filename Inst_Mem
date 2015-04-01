@@ -1,0 +1,46 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity IMEM is 
+port(Address : in std_logic_vector(31 downto 0);
+	ReadData: out std_logic_vector(31 downto 0)
+);
+end IMEM;
+
+Architecture arch_IMEM of IMEM is
+type Instrucplace is array(0 to 127) of std_logic_vector(7 downto 0);
+signal instructmem : Instrucplace := (X"02" , X"11" , X"40", X"24",
+					X"8D", X"0A", X"00", X"00",
+					X"8D", X"0B", X"00", X"04",
+					X"02", X"12", X"60", X"16",
+					X"AD", X"0C", X"00", X"08", others =>"00000000");
+begin
+process (address) 
+variable convert : std_logic_vector(31 downto 0) := (others=>'0');
+variable part1 : integer;
+variable part2: integer;
+variable part3 : integer;
+variable part4 :integer;	 
+
+begin
+part1:= conv_integer(Address);
+part2 := part1+1;
+part3:= part1+2;
+part4:= part1+3;
+if( part1 < 127) then
+convert:= instructmem(part1)&instructmem(part2)&instructmem(part3)&instructmem(part4);
+end if;
+ReadData<= convert;
+	--imem(0) := X"8e080000";
+	--imem(1) := X"8e0990004";
+	--imem(2) := X"11090014";
+	--imem(3) := X"02375022";
+	--imem(4) := X"08000006";
+	--imem(5) := X"00211502";
+	--imem(6) := X"A6020008";	
+
+end process;
+
+end arch_IMEM;
