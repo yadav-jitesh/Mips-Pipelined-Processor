@@ -1,0 +1,67 @@
+library ieee;
+
+use ieee.std_logic_1164.all;
+
+use ieee.std_logic_arith.all;
+
+use ieee.std_logic_unsigned.all;
+
+
+
+
+entity RegMem is
+
+  port( clk : in std_logic;
+
+        RegWrite : in std_logic;
+
+        ReadData:  in std_logic_vector(31 downto 0);
+
+        ALUresult : in std_logic_vector(31 downto 0);
+
+        Muxo  :in std_logic_vector(4 downto 0);
+
+        MemtoReg : in std_logic;
+
+        O_Regwrite : out std_logic;
+
+        O_ReadData : out std_logic_vector(31 downto 0);
+
+        O_ALUResult : out std_logic_vector(31 downto 0);
+
+        O_Muxo : out std_logic_vector(4 downto 0 );
+
+        O_MemtoReg : out std_logic
+
+      );
+
+    end RegMem;
+
+
+
+
+architecture arch_RegMem of RegMem is
+
+begin
+
+  process(clk)
+
+    begin 
+
+      if(rising_edge(clk)) then
+
+      O_Regwrite<= RegWrite;
+
+      O_ReadData <= ReadData;
+
+      O_ALUResult <= ALUresult;
+
+      O_Muxo <= Muxo;
+
+      O_MemtoReg<= MemtoReg;
+
+    end if;
+
+  end process;
+
+end arch_RegMem;
