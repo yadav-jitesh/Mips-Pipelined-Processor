@@ -1,0 +1,19 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity And2 is 
+port( x : in std_logic;
+	y : in std_logic;
+	z: out std_logic
+);
+end And2;
+
+architecture Arch_and2 of And2 is
+
+begin
+
+	z <= x and y ;
+end Arch_and2;
+
